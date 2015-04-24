@@ -1,15 +1,5 @@
 module.exports = createLayout;
 
-/**
- * Creates force based layout for a given graph.
- * @param {ngraph.graph} graph which needs to be laid out
- * @param {object} physicsSettings if you need custom settings
- * for physics simulator you can pass your own settings here. If it's not passed
- * a default one will be created.
- */
-
-
-
 function createLayout(graph, settings) {
 
   if (!graph) {
