@@ -1,0 +1,22 @@
+{
+  "name": "ngraph.circular.fixed",
+  "version": "1.0.0",
+  "description": "Circular layout for ngraph",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DariaP/ngraph.circular.fixed.git"
+  },
+  "author": "Daria Kashcha <dashka.kh@gmail.com> (https://github.com/DariaP)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DariaP/ngraph.circular.fixed/issues"
+  },
+  "homepage": "https://github.com/DariaP/ngraph.circular.fixed"
+}
