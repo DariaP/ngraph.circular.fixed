@@ -15,6 +15,8 @@ function createLayout(graph, settings) {
         y2 : settings.center.y + settings.radius
       };
 
+  var links = setLinksPositions(nodes);
+
   var api = {
 
     /* All positions are already set and final */
@@ -26,7 +28,6 @@ function createLayout(graph, settings) {
      * For a given `nodeId` returns position
      */
     getNodePosition: function (nodeId) {
-      console.log(nodes[nodeId]);
       return nodes[nodeId];
     },
 
@@ -37,6 +38,10 @@ function createLayout(graph, settings) {
      */
     getGraphRect: function () {
       return graphRect;
+    },
+
+    getLinkPosition: function(linkId) {
+      return links[linkId];
     },
 
     setNodesPositions: function () {
@@ -69,6 +74,23 @@ function createLayout(graph, settings) {
     });
 
     return nodes;
+  }
+
+  function setLinksPositions(nodes) {
+    var links = {};
+    graph.forEachLink(function (link) {
+      links[link.id] = {
+        from: {
+          x: nodes[link.fromId].x,
+          y: nodes[link.fromId].y
+        },
+        to: {
+          x: nodes[link.toId].x,
+          y: nodes[link.toId].y
+        }      
+      };
+    });
+    return links;
   }
 
 };
