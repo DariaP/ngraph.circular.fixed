@@ -1,6 +1,6 @@
 {
   "name": "ngraph.circular.fixed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Circular layout for ngraph",
   "main": "index.js",
   "directories": {
