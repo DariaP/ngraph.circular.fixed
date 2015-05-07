@@ -7,15 +7,11 @@ function createLayout(graph, settings) {
   }
 
   /* Set positions (x, y) according to nodes sequence */
-  var nodes = setNodesPositions(),
-      graphRect = {
-        x1 : settings.center.x - settings.radius,
-        y1 : settings.center.y - settings.radius,
-        x2 : settings.center.x + settings.radius,
-        y2 : settings.center.y + settings.radius
-      };
+  var nodes = {}, links = {};
 
-  var links = setLinksPositions(nodes);
+  resetAll();
+
+  listenToGraphEvents();
 
   var api = {
 
@@ -51,9 +47,13 @@ function createLayout(graph, settings) {
 
   return api;
 
+  function resetAll() {
+    setNodesPositions();
+    setLinksPositions(nodes);
+  }
+
   function setNodesPositions() {
     var nodesCount = graph.getNodesCount(),
-        nodes = {},
         angleStep,
         angle = 0,
         radius = settings.radius,
@@ -66,31 +66,73 @@ function createLayout(graph, settings) {
     angleStep = 2 * Math.PI / nodesCount;
 
     graph.forEachNode(function (node) {
-      nodes[node.id] = {
+      // One of the ngraph requirements for layout is
+      // pos object should remaine the same object
+      var newPos = {
         x : center.x + radius * Math.sin(angle),
         y : center.y + radius * Math.cos(angle)
       };
+      if (nodes[node.id]) {
+        nodes[node.id].x = newPos.x;
+        nodes[node.id].y = newPos.y;
+      } else {
+        nodes[node.id] = newPos;
+      }
       angle += angleStep;
     });
-
-    return nodes;
   }
 
   function setLinksPositions(nodes) {
-    var links = {};
+
     graph.forEachLink(function (link) {
-      links[link.id] = {
-        from: {
-          x: nodes[link.fromId].x,
-          y: nodes[link.fromId].y
-        },
-        to: {
-          x: nodes[link.toId].x,
-          y: nodes[link.toId].y
-        }      
-      };
+      // One of the ngraph requirements for layout is
+      // pos object should remaine the same object
+      var newPosition = getLinkPosition(link);
+      if (links[link.id]) {
+        links[link.id].from = newPosition.from;
+        links[link.id].to = newPosition.to;
+      } else {
+        links[link.id] = newPosition;
+      }
     });
-    return links;
+  }
+
+  function getLinkPosition(link) {
+    return {
+      from: {
+        x: nodes[link.fromId].x,
+        y: nodes[link.fromId].y
+      },
+      to: {
+        x: nodes[link.toId].x,
+        y: nodes[link.toId].y
+      }      
+    };
+  }
+
+  function listenToGraphEvents() {
+    graph.on('changed', onGraphChanged);
+  }
+
+  function onGraphChanged(changes) {
+    for (var i = 0; i < changes.length; ++i) {
+      var change = changes[i];
+      if (change.changeType === 'add') {
+        if (change.node) {
+          resetAll();
+        }
+        if (change.link) {
+          links[change.link.id] = getLinkPosition(change.link);
+        }
+      } else if (change.changeType === 'remove') {
+        if (change.node) {
+          resetAll();
+        }
+        if (change.link) {
+          links[change.link.id] = null;
+        }
+      }
+    }
   }
 
 };
